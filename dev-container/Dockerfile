@@ -33,7 +33,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
     ripgrep \
     fd-find \
-    just \
     && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
     && locale-gen \
     && apt-get clean \
@@ -86,12 +85,21 @@ RUN curl -fsSL https://bun.sh/install | bash
 # 9. Install pnpm (Standalone)
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.zshrc" SHELL="$(which zsh)" zsh -
 
+# Install some tools
+ENV PATH="/home/$USER_NAME/.cargo/bin:$PATH"
+RUN cargo install --locked \
+    just \
+    bat \
+    eza
+
 
 ENV GOROOT="/usr/local/go"
 ENV GOPATH="/home/$USER_NAME/go"
 
 # Create a minimal .zshrc
+RUN echo 'eval "$(just --completions zsh)"' >> ~/.zshrc
 RUN echo 'eval "$(starship init zsh)"' >> ~/.zshrc
+RUN echo "alias ls='eza --icons'" >> ~/.zshrc
 RUN echo "alias ll='ls -la'" >> ~/.zshrc
 RUN echo "alias pn='pnpm'" >> ~/.zshrc
 
