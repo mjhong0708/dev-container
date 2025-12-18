@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     build-essential \
     libssl-dev \
+    pkg-config \
     zsh \
     htop \
     nvtop \
