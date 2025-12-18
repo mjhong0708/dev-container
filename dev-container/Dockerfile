@@ -64,8 +64,10 @@ ENV SHELL=/bin/zsh
 COPY --chown=$USER_NAME:$USER_NAME ../scripts /home/$USER_NAME/scripts
 RUN chmod +x /home/$USER_NAME/scripts/*.sh
 
-RUN /home/$USER_NAME/scripts/install-lazygit.sh
-RUN /home/$USER_NAME/scripts/install-neovim.sh
+USER root
+RUN /home/${USER_NAME}/scripts/install-lazygit.sh
+RUN /home/${USER_NAME}/scripts/install-neovim.sh
+USER ${USER_NAME}
 RUN /home/$USER_NAME/scripts/setup-git-config.sh
 
 # 5. Install Rust (rustup)
