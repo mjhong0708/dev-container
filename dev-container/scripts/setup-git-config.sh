@@ -1,4 +1,4 @@
-#!/bin/bash -i
+#!/bin/bash
 set -e
 
 git config --global user.name "Minjoon Hong"

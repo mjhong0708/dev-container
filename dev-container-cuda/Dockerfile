@@ -24,13 +24,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl-dev \
     pkg-config \
     zsh \
-    htop \
-    nvtop \
     sudo \
     unzip \
     locales \
     vim \
     neovim \
+    htop \
+    nvtop \
     openssh-client \
     jq \
     ripgrep \
@@ -69,8 +69,12 @@ RUN chmod +x /home/$USER_NAME/scripts/*.sh
 USER root
 RUN /home/${USER_NAME}/scripts/install-lazygit.sh
 RUN /home/${USER_NAME}/scripts/install-neovim.sh
+RUN /home/${USER_NAME}/scripts/install-just.sh
+RUN /home/${USER_NAME}/scripts/install-bat.sh
+RUN /home/${USER_NAME}/scripts/install-eza.sh
 USER ${USER_NAME}
 RUN /home/$USER_NAME/scripts/setup-git-config.sh
+RUN rm -rf /home/$USER_NAME/scripts
 
 # 5. Install Rust (rustup)
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -87,16 +91,14 @@ RUN curl -fsSL https://bun.sh/install | bash
 # 9. Install pnpm (Standalone)
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.zshrc" SHELL="$(which zsh)" zsh -
 
-# Install some tools
-ENV PATH="/home/$USER_NAME/.cargo/bin:$PATH"
-RUN cargo install --locked \
-    just \
-    bat \
-    eza
-
-
+# Setup environments
+ENV PNPM_HOME="/home/$USER_NAME/.local/share/pnpm"
+ENV PATH="$PNPM_HOME:/home/$USER_NAME/.local/bin:$PATH"
 ENV GOROOT="/usr/local/go"
 ENV GOPATH="/home/$USER_NAME/go"
+
+RUN pnpm env use --global lts
+RUN uv python install 3.13
 
 # Create a minimal .zshrc
 RUN echo 'eval "$(just --completions zsh)"' >> ~/.zshrc
