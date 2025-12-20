@@ -1,16 +1,15 @@
 FROM ubuntu:24.04
 
-# Arguments for version control
-ARG USER_NAME=dev
-ARG USER_UID=1001
-ARG USER_GID=1001
+# These are the default of ubuntu:24.04
+ARG USER_NAME=ubuntu
+ARG USER_UID=1000
+ARG USER_GID=1000
+ARG GOLANG_VERSION=1.25.5
 
 # Environment Variables1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
-
-ENV GOLANG_VERSION=1.25.5
 
 # 1. System Setup & Common Packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -33,6 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
     ripgrep \
     fd-find \
+    gh \
     && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
     && locale-gen \
     && apt-get clean \
@@ -48,12 +48,11 @@ RUN wget -q https://go.dev/dl/go${GOLANG_VERSION}.linux-${TARGETARCH}.tar.gz \
 # 3. Install Starship (System-wide)
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
-# 4. Create Non-Root User 'dev'
+# 4. Add ubuntu to sudoers
 # -s /bin/zsh: Sets default shell to Zsh
 # -G sudo: Adds to sudo group
 # We also configure sudo to not ask for password for convenience in a dev container
-RUN groupadd --gid $USER_GID $USER_NAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/zsh -G sudo $USER_NAME \
+RUN usermod -aG sudo $USER_NAME -s /bin/zsh \
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # --- SWITCH TO USER CONTEXT ---
