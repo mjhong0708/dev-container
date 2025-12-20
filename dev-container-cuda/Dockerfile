@@ -92,7 +92,7 @@ RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.zshrc" SHELL="$(which
 
 # Setup environments
 ENV PNPM_HOME="/home/$USER_NAME/.local/share/pnpm"
-ENV PATH="$PNPM_HOME:/home/$USER_NAME/.local/bin:/usr/local/go/bin:$PATH"
+ENV PATH="$PNPM_HOME:/home/$USER_NAME/.local/bin:/usr/local/go/bin:/home/$USER_NAME/go/bin:$PATH"
 ENV GOROOT="/usr/local/go"
 ENV GOPATH="/home/$USER_NAME/go"
 
