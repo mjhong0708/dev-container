@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     dumb-init \
     wget \
+    tmux \
     git \
     build-essential \
     libssl-dev \
